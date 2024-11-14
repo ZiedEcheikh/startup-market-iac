@@ -1,0 +1,50 @@
+name: Terraform Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Run on push to the main branch
+  pull_request:
+    branches:
+      - main  # Run on PRs targeting the main branch
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VAR_example: "value"  # Example of passing variables
+      TF_LOG: "INFO"  # Terraform log level for debugging
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0 # Specify your desired version
+
+      - name: List files in repository root
+        run: ls -al  # Lists all files and directories in the root directory
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan --var-file="./vars/dev.tfvars" -out=tfplan
+        continue-on-error: true
