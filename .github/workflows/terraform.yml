@@ -27,9 +27,6 @@ jobs:
         with:
           terraform_version: 1.9.0 # Specify your desired version
 
-      - name: List files in repository root
-        run: ls -al  # Lists all files and directories in the root directory
-
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
@@ -43,8 +40,10 @@ jobs:
         id: validate
         run: terraform validate
 
-
       - name: Terraform Plan
         id: plan
         run: terraform plan --var-file="./vars/dev.tfvars" -out=tfplan
-        continue-on-error: true
+
+      - name: Terraform Apply with .tfvars
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve tfplan

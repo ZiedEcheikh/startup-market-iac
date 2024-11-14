@@ -1,6 +1,6 @@
 
 resource "aws_ecs_cluster" "fargate_cluster" {
-  name = "esc_market_fargate_cluster"
+  name = "esc-market-fargate-cluster"
 }
 
 
@@ -24,14 +24,14 @@ data "aws_iam_policy_document" "ecs_task_execution_policy_document" {
 }
 
 resource "aws_iam_policy" "ecs_task_execution_policy" {
-  name        = "ecs_task_execution_policy_dev"
+  name        = "ecs-task-execution-policy-dev"
   description = "Policy to allowed ecs task to execute"
   policy      = data.aws_iam_policy_document.ecs_task_execution_policy_document.json
 }
 
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs_task_execution_role"
+  name = "ecs-task-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -53,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 
 
 resource "aws_lb" "alb" {
-  name               = "ecs-alb"
+  name               = "startup-market-ec-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]

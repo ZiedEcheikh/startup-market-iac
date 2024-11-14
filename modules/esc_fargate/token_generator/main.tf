@@ -52,7 +52,7 @@ resource "aws_ecs_service" "token_generator_service" {
   name            = "token-generator-service"
   cluster         = var.esc_cluster_id
   task_definition = aws_ecs_task_definition.token_generator_task_definition.arn
-  desired_count   = 0
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
