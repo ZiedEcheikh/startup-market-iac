@@ -60,4 +60,11 @@ resource "aws_vpc_endpoint" "ssm" {
 }
  ./check-ecs-exec.sh esc_market_fargate_cluster 4bf75d813abf4c74a94acc630d113dbf
 
+aws ecs list-tasks --cluster esc_market_fargate_cluster
+
+aws ecs describe-tasks \
+    --cluster esc_market_fargate_cluster \
+    --tasks 4bf75d813abf4c74a94acc630d113dbf
+
+
 aws ecs execute-command --cluster esc_market_fargate_cluster --task 4bf75d813abf4c74a94acc630d113dbf --container authorization-server-container --command "/bin/sh" --interactive
