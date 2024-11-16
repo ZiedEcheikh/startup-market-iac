@@ -8,4 +8,5 @@ module "ecs_services" {
   ghcrio_secret_arn = module.secrets.arn_ghcrio_credentials
   vpc_id            = var.vpc_id
   subnets           = var.subnets
+  environment       = var.environment
 }

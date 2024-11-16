@@ -1,3 +1,8 @@
+variable "environment" {
+  type        = string
+  description = "Environment to deploy infra"
+}
+
 variable "ghcrio_secret_arn" {
   type        = string
   description = "Github package secret arn"
