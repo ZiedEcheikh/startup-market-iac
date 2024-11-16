@@ -1,6 +1,6 @@
-variable "ghcrio_secret_arn" {
+variable "environment" {
   type        = string
-  description = "Github package secret arn"
+  description = "Environment to deploy infra"
 }
 
 variable "vpc_id" {
@@ -11,4 +11,9 @@ variable "vpc_id" {
 variable "subnets" {
   type        = list(any)
   description = "List of sunbnets IDs"
+}
+
+variable "ghcrio_secret_arn" {
+  type        = string
+  description = "Github package secret arn"
 }

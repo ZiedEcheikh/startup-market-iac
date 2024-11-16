@@ -1,6 +1,6 @@
 
 resource "aws_ecs_cluster" "fargate_cluster" {
-  name = "esc-market-fargate-cluster"
+  name = "esc-market-fargate-cluster-${var.environment}"
 }
 
 
@@ -24,14 +24,14 @@ data "aws_iam_policy_document" "ecs_task_execution_policy_document" {
 }
 
 resource "aws_iam_policy" "ecs_task_execution_policy" {
-  name        = "ecs-task-execution-policy-dev"
+  name        = "ecs-task-execution-policy-${var.environment}"
   description = "Policy to allowed ecs task to execute"
   policy      = data.aws_iam_policy_document.ecs_task_execution_policy_document.json
 }
 
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role"
+  name = "ecs-task-execution-role-${var.environment}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -53,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 
 
 resource "aws_lb" "alb" {
-  name               = "startup-market-ec-alb"
+  name               = "startup-market-ec-alb-${var.environment}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
@@ -75,7 +75,7 @@ resource "aws_lb_listener" "alb_listener" {
 }
 
 resource "aws_security_group" "alb_sg" {
-  name        = "alb-security-group"
+  name        = "alb-security-group-${var.environment}"
   description = "Allow HTTP traffic for ALB"
   vpc_id      = var.vpc_id
 
@@ -98,6 +98,7 @@ resource "aws_security_group" "alb_sg" {
 module "auth_server_service" {
   source                  = "./auth_server"
   depends_on              = [aws_lb_listener.alb_listener, aws_ecs_cluster.fargate_cluster]
+  environment             = var.environment
   ghcrio_secret_arn       = var.ghcrio_secret_arn
   esc_cluster_id          = aws_ecs_cluster.fargate_cluster.id
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role.arn
@@ -111,6 +112,7 @@ module "auth_server_service" {
 module "token_generator_service" {
   source                  = "./token_generator"
   depends_on              = [aws_lb_listener.alb_listener, aws_ecs_cluster.fargate_cluster]
+  environment             = var.environment
   ghcrio_secret_arn       = var.ghcrio_secret_arn
   esc_cluster_id          = aws_ecs_cluster.fargate_cluster.id
   ecs_task_execution_role = aws_iam_role.ecs_task_execution_role.arn
