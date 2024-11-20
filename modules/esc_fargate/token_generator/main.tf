@@ -9,14 +9,14 @@ resource "aws_ecs_task_definition" "token_generator_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "token-generator-container"
-      image     = "ghcr.io/ziedecheikh/startup-token-generator:sha-ef7a724"
+      image     = "ghcr.io/ziedecheikh/startup-token-generator:sha-6ffe76b"
       cpu       = 256
       memory    = 512
       essential = true
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/token-generator"
+          awslogs-group         = "/ecs/token-generator/${var.environment}"
           awslogs-region        = "eu-west-3"
           awslogs-stream-prefix = "ecs"
       } }
@@ -32,8 +32,8 @@ resource "aws_ecs_task_definition" "token_generator_task_definition" {
           value = format("http://%s", var.alb_dns_name)
         },
         {
-          name  = "ISSUER_URI"
-          value = format("http://%s", var.alb_dns_name)
+          name  = "AUTH_SERVER_ISSUER_URI"
+          value = format("http://%s/startup/authserver", var.alb_dns_name)
         }
       ]
       repositoryCredentials = {
@@ -49,10 +49,10 @@ resource "aws_cloudwatch_log_group" "esc_token_generator_log_group" {
 }
 
 resource "aws_ecs_service" "token_generator_service" {
-  name            = "token-generator-service"
+  name            = "token-generator-service-${var.environment}"
   cluster         = var.esc_cluster_id
   task_definition = aws_ecs_task_definition.token_generator_task_definition.arn
-  desired_count   = 0
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {

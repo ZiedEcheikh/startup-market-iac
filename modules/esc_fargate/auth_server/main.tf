@@ -8,14 +8,14 @@ resource "aws_ecs_task_definition" "auth_server_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "authorization-server-container"
-      image     = "ghcr.io/ziedecheikh/startup-authorization-server:sha-3f26a2d"
+      image     = "ghcr.io/ziedecheikh/startup-authorization-server:sha-bd11042"
       cpu       = 256
       memory    = 512
       essential = true
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/auth-sverver"
+          awslogs-group         = "/ecs/auth-sverver/${var.environment}"
           awslogs-region        = "eu-west-3"
           awslogs-stream-prefix = "ecs"
       } }
@@ -27,8 +27,8 @@ resource "aws_ecs_task_definition" "auth_server_task_definition" {
       ]
       environment = [
         {
-          name  = "HOST_URI"
-          value = format("http://%s", var.alb_dns_name)
+          name  = "HOST_URL"
+          value = format("http://%s/startup/authserver", var.alb_dns_name)
         }
       ]
       repositoryCredentials = {

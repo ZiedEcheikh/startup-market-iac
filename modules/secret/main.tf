@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "ghcrio" {
-  name                    = "startup/ghcrio"
+  name                    = "startup/githubpackage"
   description             = "Credentials to access github package"
   recovery_window_in_days = 0
   tags = {

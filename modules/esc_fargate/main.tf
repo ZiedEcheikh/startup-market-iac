@@ -122,3 +122,21 @@ module "token_generator_service" {
   alb_sg_id               = aws_security_group.alb_sg.id
   alb_dns_name            = aws_lb.alb.dns_name
 }
+
+module "market_order_service" {
+  source                  = "./market_order"
+  depends_on              = [aws_lb_listener.alb_listener, aws_ecs_cluster.fargate_cluster]
+  environment             = var.environment
+  ghcrio_secret_arn       = var.ghcrio_secret_arn
+  esc_cluster_id          = aws_ecs_cluster.fargate_cluster.id
+  ecs_task_execution_role = aws_iam_role.ecs_task_execution_role.arn
+  vpc_id                  = var.vpc_id
+  subnets                 = var.subnets
+  alb_listener_arn        = aws_lb_listener.alb_listener.arn
+  alb_sg_id               = aws_security_group.alb_sg.id
+  alb_dns_name            = aws_lb.alb.dns_name
+  market_order_table_name = var.market_order_table_name
+  market_order_table_arn  = var.market_order_table_arn
+  metadata_table_name     = var.metadata_table_name
+  metadata_table_arn      = var.metadata_table_arn
+}
