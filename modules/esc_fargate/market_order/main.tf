@@ -57,7 +57,7 @@ resource "aws_ecs_service" "market_order_service" {
   name            = "market-order-service-${var.environment}"
   cluster         = var.esc_cluster_id
   task_definition = aws_ecs_task_definition.market_order_task_definition.arn
-  desired_count   = 1
+  desired_count   = 0
   launch_type     = "FARGATE"
 
   network_configuration {
